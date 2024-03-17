@@ -19,7 +19,7 @@ plc.get_cpu_state()
 
 DB_NUMBER = 4
 START_OFFSET = 0
-BIT_OFFSET = 254
+BIT_OFFSET = 2
 
 start, size = Status.RANGE
 plc_params = {
@@ -31,3 +31,9 @@ plc_params = {
 reading = plc.db_read(**plc_params)
 
 print(list(reading))
+new_number = 456
+plc.db_write(
+    4,
+    start,
+    new_number.to_bytes((new_number.bit_length() + 7) // 8),
+)

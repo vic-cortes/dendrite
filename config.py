@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+import snap7
+
 
 class Status:
     RANGE = (0, 2)
@@ -23,27 +25,39 @@ class DataBlock:
     EQUIPMENT = 4
 
 
-class BytesMapping:
-    IlEVEL = 0
-    PUMP_RUNNING = 2
-    VALVE_OPEN = 2
-    FAULTED = 2
-    LOW_LEVEL = 2
-
-
-@dataclass
 class StatusDataBlock:
-    i_level: int = 0
-    x_pump_running: bool = False
-    x_valve_open: bool = False
-    x_faulted: bool = False
-    x_low_level: bool = False
+    DB_NUMBER = 4
 
-    def _current_byte_status(self, byte: int):
+    class BytesMapping:
+        IlEVEL = 0
+        PUMP_RUNNING = 2
+        VALVE_OPEN = 2
+        FAULTED = 2
+        LOW_LEVEL = 2
+
+    def __init__(self, connection: snap7.client.Client) -> None:
+        self._plc = connection
+
+    def _get_current_byte(self, byte: int, offset: int = 1) -> bytearray:
         """
         Get current value of a given byte
         """
-        pass
+        return self._plc.db_read(self.DB_NUMBER, start=byte, size=offset)
 
-    def set_level(self, level: int) -> None:
-        pass
+    def _set_current_byte(self, byte: int, data: bytearray) -> bytearray:
+        """
+        Set current value of a given byte
+        """
+        return self._plc.db_write(self.DB_NUMBER, start=byte, data=data)
+
+    @property
+    def level(self) -> int:
+        offset = 2
+        reading = self._get_current_byte(byte=self.BytesMapping.IlEVEL, offset=offset)
+        return int.from_bytes(reading)
+
+    @level.setter
+    def level(self, level: int) -> None:
+        closest_bytes = level.bit_length() + 7
+        data = level.to_bytes(closest_bytes // 8)
+        self._set_current_byte(byte=self.BytesMapping.IlEVEL, data=data)

@@ -40,42 +40,6 @@ byte_array_little = value.to_bytes((value.bit_length() + 7) // 8, "little")
 # int.from_bytes(byte_array)
 
 
-def compute_integer_byte(value: int, print_string: bool = True) -> bytearray:
-    """
-    Computes the number of required bytes and
-    create the corresponding payload
-    """
-    MINIMUN_BYTES = 2
-    MAX_BYTE_VALUE = 255
-    BYTE_LENGTH = 8
-    END_BYTES = 0
-    MAX_ALLOWED_INTEGER = 65_536 - 1
-
-    if value > MAX_ALLOWED_INTEGER:
-        raise ValueError("You passed max supported integer value")
-
-    if value > MAX_BYTE_VALUE:
-        closest_byte = value.bit_length() + 7
-        payload = value.to_bytes(closest_byte // BYTE_LENGTH)
-
-    else:
-        total_bytes = []
-        total_value = value
-
-        for _ in range(MINIMUN_BYTES):
-            total_bytes.append(total_value)
-            total_value = END_BYTES
-
-        # Reverse for byte array
-        payload = bytearray([el for el in reversed(total_bytes)])
-
-    if print_string:
-        binary_string = " | ".join(format(byte, "08b") for byte in payload)
-        print(f"Binary representation: {binary_string}")
-
-    return payload
-
-
 # Convertir bytearray a cadena de 1s y 0s
 binary_string_big = " | ".join(format(byte, "08b") for byte in byte_array_big * 2)
 binary_string_little = " | ".join(format(byte, "08b") for byte in byte_array_little)

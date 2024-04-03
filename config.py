@@ -38,11 +38,11 @@ class StatusDataBlock:
     def __init__(self, connection: snap7.client.Client) -> None:
         self._plc = connection
 
-    def _get_current_byte(self, byte: int, offset: int = 1) -> bytearray:
+    def _get_current_byte(self, byte: int, size: int = 1) -> bytearray:
         """
         Get current value of a given byte
         """
-        return self._plc.db_read(self.DB_NUMBER, start=byte, size=offset)
+        return self._plc.db_read(self.DB_NUMBER, start=byte, size=size)
 
     def _set_current_byte(self, byte: int, data: bytearray) -> bytearray:
         """
@@ -50,14 +50,27 @@ class StatusDataBlock:
         """
         return self._plc.db_write(self.DB_NUMBER, start=byte, data=data)
 
+    def _create_bytes_dict(self) -> None:
+        bytes_dict = {}
+
+        for key, value in self.BytesMapping.__dict__.items():
+            if key.startswith("__"):
+                continue
+
+            current_values = bytes_dict.get(value) or []
+            bytes_dict[value] = current_values.append(value)
+
+        self.bytes_dict = bytes_dict
+        return bytes_dict
+
     @property
     def level(self) -> int:
-        offset = 2
-        reading = self._get_current_byte(byte=self.BytesMapping.IlEVEL, offset=offset)
+        size = 2
+        reading = self._get_current_byte(byte=self.BytesMapping.IlEVEL, size=size)
         return int.from_bytes(reading)
 
     @level.setter
-    def level(self, level: int) -> None:
-        closest_bytes = level.bit_length() + 7
-        data = level.to_bytes(closest_bytes // 8)
+    def level(self, _level: int) -> None:
+        closest_byte = _level.bit_length() + 7
+        data = _level.to_bytes(closest_byte // 8)
         self._set_current_byte(byte=self.BytesMapping.IlEVEL, data=data)

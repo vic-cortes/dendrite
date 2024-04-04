@@ -1,6 +1,9 @@
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from typing import Optional, TypedDict
 
 import snap7
+
+from utils import compute_integer_byte
 
 
 class Status:
@@ -25,18 +28,12 @@ class DataBlock:
     EQUIPMENT = 4
 
 
-class StatusDataBlock:
-    DB_NUMBER = 4
+class DataBlock(ABC):
+    DB_NUMBER = None
+    _plc = None
 
     class BytesMapping:
-        IlEVEL = 0
-        PUMP_RUNNING = 2
-        VALVE_OPEN = 2
-        FAULTED = 2
-        LOW_LEVEL = 2
-
-    def __init__(self, connection: snap7.client.Client) -> None:
-        self._plc = connection
+        pass
 
     def _get_current_byte(self, byte: int, size: int = 1) -> bytearray:
         """
@@ -49,6 +46,14 @@ class StatusDataBlock:
         Set current value of a given byte
         """
         return self._plc.db_write(self.DB_NUMBER, start=byte, data=data)
+
+    def get_int_value(self, byte: int) -> int:
+        """
+        Reads data for integer field
+        """
+        INTEGER_SIZE = 2  # bytes
+        reading = self._get_current_byte(byte=byte, size=INTEGER_SIZE)
+        return int.from_bytes(reading)
 
     def _create_bytes_dict(self) -> None:
         bytes_dict = {}
@@ -63,14 +68,31 @@ class StatusDataBlock:
         self.bytes_dict = bytes_dict
         return bytes_dict
 
+
+class ByteConfig(TypedDict):
+    type_of: str
+    byte_number: int
+    bit_position: int
+
+
+class StatusDb(DataBlock):
+    DB_NUMBER = 4
+
+    class BytesMapping:
+        LEVEL = 0
+        IS_PUMP_RUNNING = 2
+        IS_VALVE_OPEN = 2
+        IS_FAULTED = 2
+        IS_LOW_LEVEL = 2
+
+    def __init__(self, connection: snap7.client.Client) -> None:
+        self._plc = connection
+
     @property
     def level(self) -> int:
-        size = 2
-        reading = self._get_current_byte(byte=self.BytesMapping.IlEVEL, size=size)
-        return int.from_bytes(reading)
+        return self.get_int_value(self.BytesMapping.LEVEL)
 
     @level.setter
     def level(self, _level: int) -> None:
-        closest_byte = _level.bit_length() + 7
-        data = _level.to_bytes(closest_byte // 8)
-        self._set_current_byte(byte=self.BytesMapping.IlEVEL, data=data)
+        data = compute_integer_byte(_level)
+        self._set_current_byte(byte=self.BytesMapping.LEVEL, data=data)

@@ -79,11 +79,11 @@ class StatusDb(DataBlock):
     DB_NUMBER = 4
 
     class BytesMapping:
-        LEVEL = 0
-        IS_PUMP_RUNNING = 2
-        IS_VALVE_OPEN = 2
-        IS_FAULTED = 2
-        IS_LOW_LEVEL = 2
+        LEVEL = 0.0
+        IS_PUMP_RUNNING = 2.0
+        IS_VALVE_OPEN = 2.1
+        IS_FAULTED = 2.2
+        IS_LOW_LEVEL = 2.3
 
     def __init__(self, connection: snap7.client.Client) -> None:
         self._plc = connection
@@ -96,3 +96,7 @@ class StatusDb(DataBlock):
     def level(self, _level: int) -> None:
         data = compute_integer_byte(_level)
         self._set_current_byte(byte=self.BytesMapping.LEVEL, data=data)
+
+    @property
+    def is_pump_running(self) -> bool:
+        pass

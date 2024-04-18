@@ -1,4 +1,4 @@
-from dendrite.data_block.fields import BoolField, IntegerField
+from dendrite.data_block import BoolField, IntegerField
 
 
 class StatusDataBlock:

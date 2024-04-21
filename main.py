@@ -2,7 +2,7 @@ import time
 
 import snap7
 
-from config import DataBlock, Status, StatusDataBlock
+from config import DataBlock, Status, StatusDb
 
 PLC_IP = "192.168.0.1"
 RACK = 0
@@ -58,6 +58,6 @@ plc.db_write(4, 0, byte_array)
 
 
 if __name__ == "__main__":
-    status_db = StatusDataBlock(connection=plc)
+    status_db = StatusDb(connection=plc)
 
     print(status_db._create_bytes_dict())

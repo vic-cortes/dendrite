@@ -1,11 +1,10 @@
 from dendrite.siemens.plc import data_block as siemens
 
 
-class StatusDataBlock:
-    DB_NUMBER = 4
+class StatusDataBlock(siemens.DataBlock):
 
-    level = siemens.IntegerField(byte_number=0, db_number=DB_NUMBER)
-    pump_running = siemens.BoolField(byte_number=2, bit_position=0, db_number=DB_NUMBER)
+    level = siemens.IntegerField(byte_number=0, db_number=4)
+    pump_running = siemens.BoolField(byte_number=2, bit_position=0, db_number=4)
 
 
 if __name__ == "__main__":

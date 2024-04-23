@@ -2,6 +2,23 @@ from weakref import WeakKeyDictionary
 
 INTEGER_BYTE_SIZE = 2
 MAX_ALLOWED_INTEGER = 65_536 - 1
+MAX_ALLOWED_DB_NUMBER = 20
+
+
+class DataBlock:
+    db_number = None
+
+    def __init_subclass__(cls, **kwargs) -> None:
+        super().__init_subclass__(**kwargs)
+
+        if cls.db_number is None:
+            raise ValueError("'db_number' must be set")
+
+        if not isinstance(cls.db_number, int):
+            raise ValueError("'db_number' must be an integer")
+
+        if not (0 <= cls.db_number <= MAX_ALLOWED_DB_NUMBER):
+            raise ValueError("db_number must be between 0 and 65535")
 
 
 class BoolField:
@@ -15,9 +32,9 @@ class BoolField:
         self._values = WeakKeyDictionary()
 
     def __get__(self, instance, instance_type):
+        # TODO: Add logic for data retrieve from byte
         if instance is None:
             return self
-        # TODO: Add logic for data retrival from byte
         return self._values.get(instance)
 
     def __set__(self, instance, value):
@@ -40,7 +57,7 @@ class IntegerField:
     def __get__(self, instance, instance_type):
         if instance is None:
             return self
-        # TODO: Add logic for data retrival from byte
+        # TODO: Add logic for data retrieve from byte
         return self._values.get(instance)
 
     def __set__(self, instance, value):

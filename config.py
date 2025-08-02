@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import Optional, TypedDict
+from abc import ABC
+from typing import TypedDict
 
 import snap7
 

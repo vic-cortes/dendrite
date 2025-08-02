@@ -3,7 +3,6 @@ import threading
 import time
 
 import pytest
-import snap7
 from snap7.server import Server
 from snap7.type import SrvArea, WordLen
 
@@ -22,7 +21,6 @@ class MockS7Server:
         self._server = Server(log=False)
 
         # Create an array of type WordLen.Byte.ctype (usually c_int8) as expected by Snap7.
-
         array_type = WordCType * size_bytes
         self._db20_data = array_type(0)  # Default to all 0
 

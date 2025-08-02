@@ -1,12 +1,17 @@
 import snap7
 
+ADDRESS = "127.0.0.1"
+RACK = 0
+SLOT = 1
+TCP_PORT = 1102
+
 
 def test_plc_connection(mock_s7_server):
     """Test basic connectivity to the mock PLC server."""
     client = snap7.client.Client()
 
     # Connect to the mock server
-    client.connect("127.0.0.1", 0, 1, 102)
+    client.connect(ADDRESS, RACK, SLOT, TCP_PORT)
 
     # Verify connection
     assert client.get_connected() == True

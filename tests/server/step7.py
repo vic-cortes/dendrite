@@ -63,3 +63,13 @@ class MockS7Server:
         """Read bytes from the server buffer without connecting a client."""
         buf = bytes(self._db20_data[start : start + length])
         return buf
+
+
+if __name__ == "__main__":
+    # Example usage
+    server = MockS7Server(tcp_port=1102, size_bytes=512, log=True)
+    try:
+        server.set_db20(0, b"\x01\x02\x03\x04")
+        print(server.get_db20(0, 4))  # Should print: b'\x01\x02\x03\x04'
+    except Exception as e:
+        print(f"Error: {e}")

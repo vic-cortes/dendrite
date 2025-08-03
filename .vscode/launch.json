@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "PLC Client",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/utils/client.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PLC_IP": "127.0.0.1",
+        "PLC_RACK": "0",
+        "PLC_SLOT": "1",
+        "PLC_PORT": "1102"
+      },
+      "purpose": ["debug-in-terminal"],
+      "presentation": {
+        "hidden": false,
+        "group": "PLC",
+        "order": 1
+      }
+    }
+  ]
+}

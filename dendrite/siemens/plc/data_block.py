@@ -20,6 +20,29 @@ class DataBlock:
         if not (0 <= cls.db_number <= MAX_ALLOWED_DB_NUMBER):
             raise ValueError("db_number must be between 0 and 20")
 
+    def to_dict(self, skip_none: bool = False) -> dict:
+        """
+        Convert the data block to a dictionary representation.
+        """
+        BLACK_LIST = ["db_number", "to_dict"]
+        data = {
+            "name": self.__class__.__name__,
+            "db_number": self.db_number,
+            "data": {},
+        }
+
+        # TODO: Use __dict__ to retrieve instance variables
+        for field_name in dir(self.__class__):
+            if field_name in BLACK_LIST or field_name.startswith("__"):
+                continue
+
+            if skip_none and getattr(self, field_name) is None:
+                continue
+
+            data["data"][field_name] = getattr(self, field_name)
+
+        return data
+
 
 class BoolField:
 
@@ -32,7 +55,7 @@ class BoolField:
 
     def __get__(self, instance, instance_type):
         # TODO: Add logic for data retrieve from byte
-        db_number = instance_type.db_number
+        # db_number = instance_type.db_number
         if instance is None:
             return self
         return self._values.get(instance)
@@ -57,7 +80,7 @@ class IntegerField:
     def __get__(self, instance, instance_type) -> None:
         #! Note: this variable is used to get the db_number from the instance
         #! is very important since with db_number we can get the data from the PLC
-        db_number = instance_type.db_number
+        # db_number = instance_type.db_number
         if instance is None:
             return self
         # TODO: Add logic for data retrieve from byte

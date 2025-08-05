@@ -21,6 +21,18 @@
         "group": "PLC",
         "order": 1
       }
+    },
+    {
+      "name": "Dendrite module",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/tests/test.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "purpose": ["debug-in-terminal"],
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
     }
   ]
 }

@@ -55,13 +55,11 @@ class BoolField:
 
     def __get__(self, instance, instance_type):
         # TODO: Add logic for data retrieve from byte
-        # db_number = instance_type.db_number
         if instance is None:
             return self
         return self._values.get(instance)
 
     def __set__(self, instance, value):
-        db_number = instance.db_number
         if not (0 <= value <= MAX_ALLOWED_INTEGER):
             raise ValueError(f"Value must be between 0 and {MAX_ALLOWED_INTEGER}")
         # TODO: Add logic for sending data to PLC
@@ -80,14 +78,12 @@ class IntegerField:
     def __get__(self, instance, instance_type) -> None:
         #! Note: this variable is used to get the db_number from the instance
         #! is very important since with db_number we can get the data from the PLC
-        # db_number = instance_type.db_number
         if instance is None:
             return self
         # TODO: Add logic for data retrieve from byte
         return self._values.get(instance)
 
     def __set__(self, instance, value) -> None:
-        # db_number = instance.db_number
         if not (0 <= value <= MAX_ALLOWED_INTEGER):
             raise ValueError(f"Value must be between 0 and {MAX_ALLOWED_INTEGER}")
         # TODO: Add logic for sending data to PLC
